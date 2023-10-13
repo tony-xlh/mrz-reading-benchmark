@@ -23,11 +23,15 @@
                 </div>
                 <div>
                   <div class="statistics-name">Rate of detected files: </div>
-                  <div class="statistics-value">{{ statistics.detectedFilesRate }}%</div>
+                  <div class="statistics-value">{{ (statistics.correctFilesNumber / statistics.fileNumber * 100).toFixed(2) }}%</div>
                 </div>
                 <div>
                   <div class="statistics-name">Average time (ms): </div>
                   <div class="statistics-value">{{statistics.averageTime}}</div>
+                </div>
+                <div>
+                  <div class="statistics-name">Average score: </div>
+                  <div class="statistics-value">{{statistics.score}}</div>
                 </div>
               </div>
               <div class="col-12 col-md statistics-charts">
@@ -109,19 +113,11 @@
                     {{ props.row.groundTruth }}
                   </div>
                 </q-td>
-                <q-td key="barcodeFormat" :props="props">
-                  <div class="text">
-                    {{ props.row.barcodeFormat }}
-                  </div>
-                </q-td>
                 <q-td key="time" :props="props">
                   {{ props.row.time }}
                 </q-td>
-                <q-td key="correct" :props="props">
-                  {{ props.row.correct }}
-                </q-td>
-                <q-td key="misdetected" :props="props">
-                  {{ props.row.misdetected }}
+                <q-td key="score" :props="props">
+                  {{ props.row.score }}
                 </q-td>
               </q-tr>
             </template>
@@ -201,9 +197,9 @@ import { onMounted, ref } from "vue";
 import { useMeta } from 'quasar'
 import { useRouter } from "vue-router";
 import localForage from "localforage";
-import { dataURLtoBlob, getFilenameWithoutExtension, loadProjectReaderConfigs, readFileAsDataURL, readFileAsText, removeProjectFiles, sleep } from "src/utils";
+import { calculateEngineStatistics, dataURLtoBlob, getFilenameWithoutExtension, loadProjectReaderConfigs, readFileAsDataURL, readFileAsText, removeProjectFiles, sleep } from "src/utils";
 import JSZip from "jszip";
-import { GroundTruth, PerformanceMetrics } from "src/definitions/definitions";
+import { PerformanceMetrics } from "src/definitions/definitions";
 import DynamsoftButton from "src/components/DynamsoftButton.vue";
 import { loadTextResultsFromZip, textResultsImported } from "src/projectUtils";
 
@@ -238,13 +234,6 @@ const columns = [
     field: 'groundTruth'
   },
   {
-    name: 'barcodeFormat',
-    required: true,
-    label: 'Barcode Format',
-    align: 'left',
-    field: 'barcodeFormat'
-  },
-  {
     name: 'time',
     required: true,
     label: 'Time (ms)',
@@ -252,19 +241,11 @@ const columns = [
     field: 'time'
   },
   {
-    name: 'correct',
+    name: 'score',
     required: true,
-    label: 'Correct',
+    label: 'Score',
     align: 'left',
-    field: 'correct',
-    sortable: true
-  },
-  {
-    name: 'misdetected',
-    required: true,
-    label: 'Misdetected',
-    align: 'left',
-    field: 'misdetected',
+    field: 'score',
     sortable: true
   }
 ]
@@ -281,7 +262,7 @@ const progress = ref(0.5);
 const progressLabel = ref("");
 const decoding = ref(false);
 const skipDetected = ref(true);
-const statistics = ref({fileNumber:0,correctFilesNumber:0,averageTime:0} as PerformanceMetrics);
+const statistics = ref({fileNumber:0,correctFilesNumber:0,averageTime:0,score:0} as PerformanceMetrics);
 const showDownloadDialog = ref(false);
 let hasToStop = false;
 let imageFiles:File[] = [];
@@ -331,7 +312,12 @@ const loadConfigs = async (projectName:string) => {
 
 const updateRows = async (displayName?:string) => {
   if (project) {
-
+    const engineStatistics = await calculateEngineStatistics(project,displayName ?? selectedEngineDisplayName.value);
+    statistics.value = engineStatistics.metrics;
+    if (engineStatistics.rows) {
+      console.log(engineStatistics.rows)
+      rows.value = engineStatistics.rows;
+    }
   }
 }
 

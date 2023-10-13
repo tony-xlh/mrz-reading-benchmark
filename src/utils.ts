@@ -1,5 +1,5 @@
 import { MRZReader, ReaderConfig, OCRResult, DetectionResult } from "./reader/MRZReader";
-import { DetectionStatistics, EngineDataTableRow, GroundTruth, PerformanceMetrics, Point, EngineStatistics, Rect } from "./definitions/definitions";
+import { EngineDataTableRow, PerformanceMetrics, EngineStatistics } from "./definitions/definitions";
 import leven from 'leven';
 import { Project } from "./project";
 import localForage from "localforage";
@@ -113,32 +113,6 @@ export function sleep(time:number){
   });
 }
 
-export function ConvertOCRResultsToGroundTruth(OCRResults:OCRResult[]):GroundTruth[] {
-  const listOfGroundTruth:GroundTruth[] = [];
-  for (let index = 0; index < OCRResults.length; index++) {
-    const result = OCRResults[index];
-    listOfGroundTruth.push(ConvertOCRResultToGroundTruth(result));
-  }
-  return listOfGroundTruth;
-}
-
-export function ConvertOCRResultToGroundTruth(result:OCRResult):GroundTruth {
-  const groundTruth:GroundTruth = {
-    text: result.text,
-    attrib:{Type:"text"},
-    value_attrib:{},
-    x1:result.x1,
-    x2:result.x2,
-    x3:result.x3,
-    x4:result.x4,
-    y1:result.y1,
-    y2:result.y2,
-    y3:result.y3,
-    y4:result.y4
-  }
-  return groundTruth;
-}
-
 export function moveItemUp(arr:any[], index:number) {
   if (index <= 0 || index > arr.length - 1) { //out of bounds
     return arr;
@@ -157,4 +131,79 @@ export function moveItemDown(arr:any[], index:number) {
     arr.splice(index + 1,0,item); //add the item
     return arr;
   }
+}
+
+
+export const calculateEngineStatistics = async (project:Project,engine:string,category?:string) => {
+  const projectName = project.info.name;
+  const newRows = [];
+  let totalElapsedTime = 0;
+  let totalCorrectFiles = 0;
+  let totalDetectedFiles = 0;
+  let totalScore = 0;
+  for (let index = 0; index < project.info.images.length; index++) {
+    const imageName = project.info.images[index];
+    if (category) {
+      if (imageName.split("/")[0] != category) { //not of the category
+        continue;
+      }
+    }
+    
+    const groundTruthString:string|null|undefined = await localForage.getItem(projectName+":groundTruth:"+getFilenameWithoutExtension(imageName)+".txt");
+    if (groundTruthString) {
+      let elapsedTime = "";
+      const detectionResultString:string|null|undefined = await localForage.getItem(projectName+":detectionResult:"+getFilenameWithoutExtension(imageName)+"-"+engine+".json");
+      if (detectionResultString) {
+        const detectionResult:DetectionResult = JSON.parse(detectionResultString);
+        totalDetectedFiles = totalDetectedFiles + 1;
+        elapsedTime = detectionResult.elapsedTime.toString();
+        totalElapsedTime = totalElapsedTime + detectionResult.elapsedTime;
+        const text = getJointResults(detectionResult.results);
+        const score = calculateSimilarity(groundTruthString,text);
+        if (score === 1.0) {
+          totalCorrectFiles = totalCorrectFiles + 1;
+        }
+        const row:EngineDataTableRow = {
+          number: (index + 1),
+          filename: imageName,
+          groundTruth: groundTruthString,
+          detectedText: text,
+          time: elapsedTime,
+          score:score
+        }
+        totalScore = totalScore + score;
+        newRows.push(row);
+      }
+    }
+  }
+  
+  const performanceMetrics:PerformanceMetrics = {
+    fileNumber: project.info.images.length,
+    correctFilesNumber: totalCorrectFiles,
+    score: totalScore/totalDetectedFiles,
+    averageTime: parseFloat((totalElapsedTime / totalDetectedFiles).toFixed(2))
+  }
+  const engineStatistics:EngineStatistics = {
+    name:engine,
+    metrics:performanceMetrics,
+    rows:newRows
+  };
+  return engineStatistics;
+}
+
+function getJointResults(results:OCRResult[]){
+  let s = "";
+  for (let index = 0; index < results.length; index++) {
+    const result = results[index];
+    s = s + result.text;
+    if (index < results.length - 1) {
+      s = s + "\r\n";
+    }
+  }
+  return s;
+}
+
+function calculateSimilarity(str1:string,str2:string):number{
+  const distance = leven(str1, str2);
+  return 1 - distance/Math.max(str1.length,str2.length);
 }
