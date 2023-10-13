@@ -2,12 +2,16 @@ import { DLRLineResult, DLRResult, LabelRecognizer } from "dynamsoft-label-recog
 import { OCRResult, DetectionResult, Setting, SettingDef } from "./MRZReader";
 import { DCEFrame } from "dynamsoft-camera-enhancer";
 
+const defaultDLRengineResourcePath = "https://cdn.jsdelivr.net/npm/dynamsoft-label-recognizer@2.2.31/dist/";
+
 let reader:LabelRecognizer;
 export default class DynamsoftMRZReader {
   private settings:Setting[] = [];
   async init() : Promise<void> {
     if (!reader) {
-        reader = await LabelRecognizer.createInstance();
+      LabelRecognizer.engineResourcePath = defaultDLRengineResourcePath;
+      reader = await LabelRecognizer.createInstance();
+      reader.updateRuntimeSettingsFromString("MRZ");
     }
   }
 

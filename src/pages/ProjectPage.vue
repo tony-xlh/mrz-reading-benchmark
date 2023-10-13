@@ -296,7 +296,7 @@ onMounted(async () => {
   const savedProjects = await localForage.getItem("projects");
   useMeta({
     // sets document title
-    title: 'Barcode Reading Benchmark - '+ projectName.value,
+    title: 'MRZ Reading Benchmark - '+ projectName.value,
   })
   if (savedProjects) {
     projects = JSON.parse(savedProjects as string);
