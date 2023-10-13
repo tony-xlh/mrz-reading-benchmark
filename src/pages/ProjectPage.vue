@@ -90,6 +90,11 @@
                       <q-item-label>Clear</q-item-label>
                     </q-item-section>
                   </q-item>
+                  <q-item clickable v-close-popup @click="goToLiveScannerDemo">
+                    <q-item-section>
+                      <q-item-label>Go to live scanner</q-item-label>
+                    </q-item-section>
+                  </q-item>
                 </q-list>
             </q-btn-dropdown>
             </template>
@@ -638,6 +643,10 @@ const reinitializeReaderIfNeeded = async () => {
       progressLabel.value = "";
     }
   }
+}
+
+const goToLiveScannerDemo = async () => {
+  window.open("https://demo.dynamsoft.com/label-recognizer-js/mrz-scanner.html","_blank");
 }
 
 const updateReaderSettings = async (config:ReaderConfig) => {
