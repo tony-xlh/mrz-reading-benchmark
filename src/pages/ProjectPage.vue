@@ -110,12 +110,12 @@
                 </q-td>
                 <q-td key="detectedText" :props="props">
                   <div class="text">
-                    {{ props.row.detectedText }}
+                    <CharsDiff :str2="props.row.detectedText" :str1="props.row.groundTruth"></CharsDiff>
                   </div>
                 </q-td>
                 <q-td key="groundTruth" :props="props">
                   <div class="text">
-                    {{ props.row.groundTruth }}
+                    <pre>{{ props.row.groundTruth }}</pre>
                   </div>
                 </q-td>
                 <q-td key="time" :props="props">
@@ -206,6 +206,7 @@ import { calculateEngineStatistics, dataURLtoBlob, getFilenameWithoutExtension, 
 import JSZip from "jszip";
 import { PerformanceMetrics } from "src/definitions/definitions";
 import DynamsoftButton from "src/components/DynamsoftButton.vue";
+import CharsDiff from "src/components/CharsDiff.vue";
 import { loadTextResultsFromZip, textResultsImported } from "src/projectUtils";
 
 const columns = [
