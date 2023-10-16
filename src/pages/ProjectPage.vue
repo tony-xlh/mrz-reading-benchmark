@@ -37,8 +37,34 @@
               <div class="col-12 col-md statistics-charts">
                 <div class="row">
                   <div class="col statistics-chart">
+                    Reading Rate:
+                    <q-circular-progress
+                      show-value
+                      font-size="12px"
+                      :value="statistics.readingRate"
+                      size="60px"
+                      :thickness="0.22"
+                      color="orange"
+                      track-color="grey-3"
+                      class="q-ma-md"
+                    >
+                      {{ statistics.readingRate }}%
+                    </q-circular-progress>
                   </div>
                   <div class="col statistics-chart">
+                    Score:
+                    <q-circular-progress
+                      show-value
+                      font-size="12px"
+                      :value="statistics.score"
+                      size="60px"
+                      :thickness="0.22"
+                      color="orange"
+                      track-color="grey-3"
+                      class="q-ma-md"
+                    >
+                      {{ statistics.score }}%
+                    </q-circular-progress>
                   </div>
                 </div>
               </div>
