@@ -74,7 +74,7 @@
             <q-tab-panel name="category">
               <div class="statistics-in-categories">
                 <div v-if="categories.length>0 && tableInCategories.length>0">
-                  <div class="statistics-of-category" v-for="table in tableInCategories" v-bind:key="'table-'+table.metrics">
+                  <div class="statistics-of-category" v-for="(table,tableIndex) in tableInCategories" v-bind:key="'table-'+table.metrics">
                     <h3>{{table.displayName}}</h3>
                     <q-markup-table>
                       <thead>
@@ -87,7 +87,7 @@
                         <tr v-for="row in table.rows" v-bind:key="row.category">
                           <td>{{ row.category }}</td>
                           <td :class="'text-left ' + ((row.highlightedIndex === index)?'highlighted':'')" v-for="(value,index) in row.statistics" v-bind:key="'value-'+row.category+'-'+index">
-                            {{ value }}
+                            {{ value + ((tableIndex != 2 )?'%':'ms') }}
                           </td>
                         </tr>
                       </tbody>
