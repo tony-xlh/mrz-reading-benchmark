@@ -213,7 +213,9 @@ pre {
   width: 50%;
 }
 
-.image-container {
-  width: 50%;
+@media screen and (max-device-width: 600px){
+  .mrz-image {
+    width: 100%;
+  }
 }
 </style>
