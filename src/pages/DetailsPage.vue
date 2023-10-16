@@ -65,7 +65,7 @@ onMounted(async () => {
   readerConfigs.value = configs;
   useMeta({
     // sets document title
-    title: 'Barcode Reading Benchmark - '+ projectName.value + ' - ' + imageName.value,
+    title: 'MRZ Reading Benchmark - '+ projectName.value + ' - ' + imageName.value,
   })
   loadImage();
   loadOCRResultsAndGroundTruth(router.currentRoute.value.params.engine as string);
