@@ -191,7 +191,7 @@ export const calculateEngineStatistics = async (project:Project,engine:string,ca
   return engineStatistics;
 }
 
-function getJointResults(results:OCRResult[]){
+export function getJointResults(results:OCRResult[]){
   let s = "";
   for (let index = 0; index < results.length; index++) {
     const result = results[index];
