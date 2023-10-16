@@ -125,7 +125,7 @@
             </q-btn-dropdown>
             </template>
             <template v-slot:body="props">
-              <q-tr :props="props">
+              <q-tr :props="props" v-bind:key="props.row.number">
                 <q-td key="number" :props="props">
                   {{ props.row.number }}
                 </q-td>
@@ -136,7 +136,8 @@
                 </q-td>
                 <q-td key="detectedText" :props="props">
                   <div class="text">
-                    <CharsDiff :str2="props.row.detectedText" :str1="props.row.groundTruth"></CharsDiff>
+                    <CharsDiff :diff="getDiff(props.row.detectedText,props.row.groundTruth)"></CharsDiff>
+                    <!--<pre>{{ props.row.detectedText }}</pre>-->
                   </div>
                 </q-td>
                 <q-td key="groundTruth" :props="props">
@@ -233,6 +234,7 @@ import { PerformanceMetrics } from "src/definitions/definitions";
 import DynamsoftButton from "src/components/DynamsoftButton.vue";
 import CharsDiff from "src/components/CharsDiff.vue";
 import { loadTextResultsFromZip, textResultsImported } from "src/projectUtils";
+import { diffChars } from "diff";
 
 const columns = [
   {
@@ -335,6 +337,10 @@ onMounted(async () => {
   updateRows();
   filesCount.value = project.info.images.length;
 });
+
+const getDiff = (str1:string,str2:string) => {
+  return diffChars(str2,str1);
+}
 
 const loadConfigs = async (projectName:string) => {
   const configs = await loadProjectReaderConfigs(projectName);
