@@ -15,7 +15,7 @@
               <div class="col-12 col-md statistics-values">
                 <div>
                   <div class="statistics-name">Total files: </div>
-                  <div class="statistics-value">{{ statistics.fileNumber }}</div>
+                  <div class="statistics-value">{{ filesCount }}</div>
                 </div>
                 <div>
                   <div class="statistics-name">Correctly detected files: </div>
@@ -296,6 +296,7 @@ const decoding = ref(false);
 const skipDetected = ref(true);
 const statistics = ref({fileNumber:0,correctFilesNumber:0,averageTime:0,score:0} as PerformanceMetrics);
 const showDownloadDialog = ref(false);
+const filesCount = ref(0);
 let hasToStop = false;
 let imageFiles:File[] = [];
 let detectionResultFiles:File[] = [];
@@ -332,6 +333,7 @@ onMounted(async () => {
     }
   }
   updateRows();
+  filesCount.value = project.info.images.length;
 });
 
 const loadConfigs = async (projectName:string) => {
