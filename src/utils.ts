@@ -148,7 +148,6 @@ export const calculateEngineStatistics = async (project:Project,engine:string,ca
         continue;
       }
     }
-    
     const groundTruthString:string|null|undefined = await localForage.getItem(projectName+":groundTruth:"+getFilenameWithoutExtension(imageName)+".txt");
     if (groundTruthString) {
       let elapsedTime = "";
@@ -169,7 +168,7 @@ export const calculateEngineStatistics = async (project:Project,engine:string,ca
           groundTruth: groundTruthString,
           detectedText: text,
           time: elapsedTime,
-          score:score
+          score:parseFloat((score*100).toFixed(2))
         }
         totalScore = totalScore + score;
         newRows.push(row);
@@ -178,9 +177,10 @@ export const calculateEngineStatistics = async (project:Project,engine:string,ca
   }
   
   const performanceMetrics:PerformanceMetrics = {
-    fileNumber: project.info.images.length,
+    fileNumber: totalDetectedFiles,
     correctFilesNumber: totalCorrectFiles,
-    score: totalScore/totalDetectedFiles,
+    readingRate: parseFloat((totalCorrectFiles/totalDetectedFiles*100).toFixed(2)),
+    score: parseFloat((totalScore/totalDetectedFiles*100).toFixed(2)),
     averageTime: parseFloat((totalElapsedTime / totalDetectedFiles).toFixed(2))
   }
   const engineStatistics:EngineStatistics = {
