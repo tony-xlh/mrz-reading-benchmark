@@ -40,8 +40,7 @@
 import { MRZReader, ReaderConfig, OCRResult, DetectionResult } from "src/reader/MRZReader";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import localForage from "localforage";
-import { getJointResults, BlobtoDataURL, dataURLtoBlob, getFilenameWithoutExtension, loadProjectReaderConfigs } from "src/utils";
+import { getJointResults, BlobtoDataURL, dataURLtoBlob, getFilenameWithoutExtension, loadProjectReaderConfigs, getLocalForage } from "src/utils";
 import { Project } from "src/project";
 import { useMeta } from "quasar";
 import DynamsoftButton from "src/components/DynamsoftButton.vue";
@@ -55,7 +54,7 @@ const imgHeight = ref(0);
 const dataURL = ref("");
 const ocrResults = ref([] as OCRResult[]);
 const groundTruth = ref("");
-
+let localForage = getLocalForage();
 let reader: MRZReader;
 
 onMounted(async () => {

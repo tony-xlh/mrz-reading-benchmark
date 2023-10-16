@@ -85,8 +85,7 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { MRZReader, ReaderConfig, Setting } from "src/reader/MRZReader";
 import DynamsoftButton from "src/components/DynamsoftButton.vue";
-import localForage from "localforage";
-import { moveItemUp, moveItemDown, defaultReaderConfigs, loadProjectReaderConfigs } from "src/utils"
+import { moveItemUp, moveItemDown, defaultReaderConfigs, loadProjectReaderConfigs, getLocalForage } from "src/utils"
 
 const projectName = ref("");
 const router = useRouter();
@@ -96,7 +95,7 @@ const showSettings = ref(false);
 const MRZReaderSettings = ref([] as Setting[]);
 const settingOptions = ref({} as any);
 let selectedIndex = -1;
-
+let localForage = getLocalForage();
 onMounted(async () => {
   projectName.value = router.currentRoute.value.params.name as string;
   supportedEngines.value = MRZReader.getEngines();

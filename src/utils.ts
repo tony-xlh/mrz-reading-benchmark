@@ -2,7 +2,21 @@ import { MRZReader, ReaderConfig, OCRResult, DetectionResult } from "./reader/MR
 import { EngineDataTableRow, PerformanceMetrics, EngineStatistics } from "./definitions/definitions";
 import leven from 'leven';
 import { Project } from "./project";
-import localForage from "localforage";
+import {default as lf} from "localforage";
+
+const localForage = lf.createInstance({
+  name: "MRZ"
+});
+
+export const getLocalForage = () => {
+  if (localForage) {
+    return localForage;
+  }else{
+    return lf.createInstance({
+      name: "MRZ"
+    }); 
+  }
+}
 
 //scanned.jpg => scanned
 export const getFilenameWithoutExtension = (filename:string) => {

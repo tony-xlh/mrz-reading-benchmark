@@ -139,7 +139,6 @@
 import { Project } from "src/project";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import localForage from "localforage";
 import { use } from "echarts/core";
 import { SVGRenderer } from "echarts/renderers";
 import { PieChart,BarChart } from "echarts/charts";
@@ -152,7 +151,7 @@ import {
 } from "echarts/components";
 import VChart from "vue-echarts";
 import { EngineStatistics } from "src/definitions/definitions";
-import { calculateEngineStatistics, loadProjectReaderConfigs } from "src/utils";
+import { calculateEngineStatistics, getLocalForage, loadProjectReaderConfigs } from "src/utils";
 import { useMeta } from "quasar";
 import DynamsoftButton from "src/components/DynamsoftButton.vue";
 import { ReaderConfig } from "src/reader/MRZReader";
@@ -186,6 +185,7 @@ const showChartsDialog = ref(false);
 const selectedTab = ref("general");
 const sorting = ref(false);
 
+let localForage = getLocalForage();
 let configs:ReaderConfig[] = [];
 let project:Project;
 let selectedTable:{metrics:string,displayName:string,rows:categoryTableRow[]};

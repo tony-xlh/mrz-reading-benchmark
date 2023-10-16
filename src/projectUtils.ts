@@ -1,7 +1,7 @@
-import { getFilenameWithoutExtension } from "./utils";
-import localForage from "localforage";
+import { getFilenameWithoutExtension, getLocalForage } from "./utils";
 import JSZip from "jszip";
 import { Project } from "./project";
+const localForage = getLocalForage();
 
 export async function textResultsImported(projectObj:Project):Promise<boolean>{
   const name = projectObj.info.name;

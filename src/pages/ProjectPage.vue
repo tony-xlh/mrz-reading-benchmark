@@ -227,8 +227,7 @@ import { Project } from "src/project.js";
 import { onMounted, ref } from "vue";
 import { useMeta } from 'quasar'
 import { useRouter } from "vue-router";
-import localForage from "localforage";
-import { calculateEngineStatistics, dataURLtoBlob, getFilenameWithoutExtension, loadProjectReaderConfigs, readFileAsDataURL, readFileAsText, removeProjectFiles, sleep } from "src/utils";
+import { calculateEngineStatistics, dataURLtoBlob, getFilenameWithoutExtension, getLocalForage, loadProjectReaderConfigs, readFileAsDataURL, readFileAsText, removeProjectFiles, sleep } from "src/utils";
 import JSZip from "jszip";
 import { PerformanceMetrics } from "src/definitions/definitions";
 import DynamsoftButton from "src/components/DynamsoftButton.vue";
@@ -283,6 +282,7 @@ const columns = [
 ]
 let reader: MRZReader;
 let project:Project;
+let localForage = getLocalForage();
 const rows = ref([] as any[]);
 const router = useRouter();
 const projectName = ref("");

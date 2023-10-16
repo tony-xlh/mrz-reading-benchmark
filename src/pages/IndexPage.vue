@@ -94,7 +94,7 @@
 
 <script setup lang="ts">
 import { Project } from "src/project";
-import localForage from "localforage";
+import {getLocalForage} from "src/utils";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { removeProjectFiles, BlobtoDataURL } from "src/utils";
@@ -114,6 +114,7 @@ const downloadingStatus = ref("");
 const status = ref("");
 const selectedProject = ref(null as null|Project);
 let selectedIndex = -1;
+let localForage = getLocalForage();
 
 onMounted(async () => {
   const savedProjects = await localForage.getItem("projects");
