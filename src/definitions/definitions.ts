@@ -15,6 +15,7 @@ export interface Rect {
 export interface PerformanceMetrics {
   fileNumber:number;
   correctFilesNumber:number;
+  readingRate:number;
   averageTime:number;
   score:number;
 }
