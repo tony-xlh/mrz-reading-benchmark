@@ -40,7 +40,7 @@ Currently, only [Dynamsoft Label Recognizer](https://www.dynamsoft.com/label-rec
 
 * Ground Truth
 
-   Platin text:
+   Plain text:
 
    ```
    P<BELBISONETTE<<ELENA<<<<<<<<<<<<<<<<<<<<<<<
